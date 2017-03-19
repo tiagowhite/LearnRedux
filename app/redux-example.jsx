@@ -10,52 +10,65 @@ var stateDefault = {
 var nextHobbyId = 1;
 var nextMovieId = 1;
 
-var reducer = (state = stateDefault, action) => {
-
+var nameReducer = (state = 'Anonymous', action) => {
   switch (action.type) {
   case 'CHANGE_NAME':
-    return {
-      ...state,
-      name: action.name
-    }
-  case 'ADD_HOBBY':
-    return {
-      ...state,
-      hobbies: [
-        ...state.hobbies,
-        {
-          id: nextHobbyId++,
-          hobby: action.hobby
-        }
-      ]
-    }
-  case 'REMOVE_HOBBY':
-    return {
-      ...state,
-      hobbies: state.hobbies.filter((hobby) => hobby.id !== action.id)
-    }
-  case 'REMOVE_MOVIE':
-  return {
-    ...state,
-    movies: state.movies.filter((movies) => movies.id !== movies.id)
+    return action.name
+  default:
+    return state;
   }
+}
 
-  case 'ADD_MOVIE':
-    return {
+var hobbiesReducers = (state = [], action) => {
+  switch (action.type) {
+  case 'ADD_HOBBY':
+    return [
       ...state,
-      movies: [
-        ...state.movies,
-        {
-          id: nextMovieId++,
-          titlle: action.title,
-          genre: action.genre
-        }
-      ]
-    }
+      {
+        id: nextHobbyId++,
+        hobby: action.hobby
+      }
+    ];
+  case 'REMOVE_HOBBY':
+    return state.filter((hobby) => hobby.id !== action.id)
   default:
     return state
   }
 }
+
+
+var moviesReducers = (state = [], action) => {
+  switch (action.type) {
+  case 'ADD_MOVIE':
+    return [
+      ...state,
+      {
+        id: nextMovieId++,
+        title: action.title,
+        genre: action.genre
+      }
+    ]
+  case 'REMOVE_MOVIE':
+    return state.filter((movies) => movies.id !== movies.id)
+  default:
+    return state
+  }
+}
+
+
+
+
+var reducer = redux.combineReducers({
+  name: nameReducer,
+  hobbies: hobbiesReducers,
+  movies: moviesReducers
+})
+
+
+
+
+
+
 
 var store = redux.createStore(reducer, redux.compose(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
